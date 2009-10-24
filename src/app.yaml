@@ -1,0 +1,23 @@
+application: scrumtaskboard
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+#- url: /.*
+#  script: hello.py
+  
+- url: /main
+  script: main.py
+  
+- url: /project/([^\/]*?)/backlog
+  script: backlog.py
+  
+- url: /project/([^\/]*?)/taskboard
+  script: taskboard.py
+
+- url: /js
+  static_dir: js
+  
+- url: /.*
+  script: main.py

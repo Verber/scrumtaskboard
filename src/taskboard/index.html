@@ -1,0 +1,87 @@
+<html>
+<head>
+<script type="text/javascript" src="/js/jquery-1.3.2.js"></script>
+<script type="text/javascript" src="/js/ui/ui.core.js"></script>
+<script type="text/javascript" src="/js/ui/ui.draggable.js"></script>
+<script type="text/javascript" src="/js/ui/ui.droppable.js"></script>
+<script type="text/javascript" src="/js/ui/ui.dialog.js"></script>
+<script type="text/javascript" src="/js/form.js"></script>
+<link rel="stylesheet" href="/js/themes/base/ui.all.css" type="text/css" />
+<script>
+  $(document).ready(function(){
+	    /* HANDLERS */
+	    $(".add-task").click(function(){
+	    	   $('#story-key').val($(this).attr("story_key"));
+	    	   $('.add-task-dialog').dialog(
+	    	    	   {'close': function(event, ui) {
+	    	    		   $('.add-task-dialog').dialog('destroy');
+	    	    	   }});
+	    	   
+		})
+
+		$('#new-task-form').ajaxForm({
+            dataType:  'json',
+            success: function(data) {
+                if (data.success) {
+                    $('div.edit_add_episode').dialog('close');
+                } else {
+                    showFlashData('error', data.message);
+                }
+            }
+        });
+		
+  })
+</script>
+
+<style>
+table#board thead {
+    background-color: #ccc;
+}
+
+.add-task-dialog {
+    
+}
+</style>
+</head>
+<body>
+<h1><a href="/">I'm logo :)</a></h1>
+<h1>Project Name: {{ proj_name }}</h1>
+<div id="menu">
+ <a href="/project/{{ proj_name }}/backlog">Backlog</a>
+ | <strong>Taskboard</strong>
+ </div>
+ <table id="board" width="100%">
+    <thead>
+        <tr>
+            <td>Story</td>
+            <td>Not started</td>
+            <td>In progress</td>
+            <td>DONE</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for story in stories %}
+	      <tr>
+	       <td>{{story.name}} <a href="#" class="add-task" story_key="{{story.key}}">Add Task</a></td>
+	       <td></td>
+	       <td></td>
+	       <td></td>
+	      </tr>
+	    {% endfor %}
+    </tbody>
+ </table>
+ 
+<!-- Sample page content to illustrate the layering of the dialog -->
+<div class="add-task-dialog" style="padding: 20px; display:none;">
+<form action="/project/{{ proj_name }}/taskboard" method="post" id="new-task-form">
+    <input type="hidden" name="storyKey" id="story-key" value=""/>
+    <input type="text" name="taskName" value="Task description here..."><br>
+    <input type="text" name="taskEstimate" value="estimate goes here">
+    <input type="submit" />
+</form>
+</div><!-- End sample page content -->
+
+</div><!-- End demo -->
+ 
+</body>
+</html>
