@@ -48,11 +48,31 @@ class TaskboardPage(webapp.RequestHandler):
             }
         self.response.out.write(simplejson.dumps(result))
 
+
+class TaskboardJSONRPC(webapp.RequestHandler):
+
+    def post(self):
+        try:
+            task = Task.get(self.request.get('key'))
+            task.status = self.request.get('status')
+            task.put()
+            result = {
+                'success':  True,
+                'message':  'Task\'s status changed'
+            }
+        except:
+            result = {
+                'success': False,
+                'message': sys.exc_info()[0]
+            }
+        self.response.out.write(simplejson.dumps(result))
+
             
         
 application = webapp.WSGIApplication(
                                      [
-                                        ('/project/(.*?)/taskboard', TaskboardPage)
+                                        ('/project/(.*?)/taskboard', TaskboardPage),
+                                        ('/taskboard/set_status', TaskboardJSONRPC)
                                      ],
                                      debug=True)
     

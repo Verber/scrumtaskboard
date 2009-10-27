@@ -16,6 +16,9 @@ handlers:
 - url: /project/([^\/]*?)/taskboard
   script: taskboard.py
 
+- url: /taskboard/set_status
+  script: taskboard.py
+
 - url: /js
   static_dir: js
   

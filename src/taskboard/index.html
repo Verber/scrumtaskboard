@@ -8,83 +8,10 @@
     <script type="text/javascript" src="/js/ui/ui.droppable.js"></script>
     <script type="text/javascript" src="/js/ui/ui.dialog.js"></script>
     <script type="text/javascript" src="/js/form.js"></script>
+    <script type="text/javascript" src="/js/taskboard.js"></script>
     <link rel="stylesheet" href="/js/themes/base/ui.theme.css" type="text/css" />
     <link rel="stylesheet" href="/js/themes/base/ui.core.css" type="text/css" />
     <link rel="stylesheet" href="/js/themes/base/ui.dialog.css" type="text/css" />
-    <script type="text/javascript">
-      $(document).ready(function(){
-                /* HANDLERS */
-                $(".add-task").click(function(){
-                       $('#story-key').val($(this).parents('tr.story-row').attr("id"));
-                       $('.add-task-dialog').dialog({
-                           title: 'Add new task',
-                           close: function(event, ui) {
-                                $('.add-task-dialog').dialog('destroy');
-                           }
-                       });
-                    })
-
-                $('#new-task-form').ajaxForm({
-                    dataType:  'json',
-                    success: function(data) {
-                        if (data.success) {
-                            var task = '<div class="draggable task-sticker"'
-                                +'id="'+data.task_key+'">'
-                                +'<div class="task">'
-                                +$(".add-task-dialog input[name='name']").val()
-                                +'<span class="estimate">'
-                                +$(".add-task-dialog input[name='estimate']").val()
-                                +'</span>'
-                                +'</div>'
-                                +'</div>';
-                            $('#'+$('#story-key').val()+' td.not-started').append(task);
-                            $('#'+data.task_key).draggable({
-                                containment: $('td', $(this).parents('tr.story-row'))
-                            });
-                            $('.add-task-dialog').dialog('close');
-                        } else {
-                            alert(data.message);
-                        }
-                    }
-                });
-
-                $('.draggable').each(function(){
-                    $(this).draggable({
-                        //cancel: 'a.ui-icon',// clicking an icon won't initiate dragging
-                        containment: $(this).parents('tr.story-row'),
-                        snap: true,
-                        snapMode: 'inner',
-                        snapTolerance: 100,
-                        scope: 'tasks',
-                        revert: 'invalid',
-                        helper: 'clone',
-                        cursor: 'move'
-                    });
-                });
-
-                $('td.not-droppable').droppable({scope: 'stories'});
-                $('td.droppable').droppable({
-                    scope: 'tasks',
-                    tolerance: 'pointer',
-                    drop: function(event, ui){
-                        $(this).append(ui.draggable);
-                        ui.draggable.attr('style', '').draggable({
-                            //cancel: 'a.ui-icon',// clicking an icon won't initiate dragging
-                            containment: $(this).parents('tr.story-row'),
-                            snap: true,
-                            snapMode: 'inner',
-                            snapTolerance: 100,
-                            scope: 'tasks',
-                            revert: 'invalid',
-                            helper: 'clone',
-                            cursor: 'move'
-                        });
-                    }
-                });
-                //$('.done').droppable();
-
-      })
-    </script>
 
     <style type="text/css">
     table#board thead {
@@ -93,6 +20,11 @@
 
     table#board td, table#board th{
         vertical-align: top;
+        border-top: 2px solid #aaa;
+    }
+
+    table#board td{
+        border-left: 1px solid #ccc;
     }
 
     .add-task-dialog {
@@ -104,16 +36,17 @@
     }
 
     div.task-sticker {
-        width: 204px;
+        width: 124px;
         height: auto;
         padding: 2px;
+        float: left;
     }
 
     div.task {
         background-color: yellow;
         margin: 3px;
-        width: 200px;
-        min-height: 100px;
+        width: 120px;
+        min-height: 60px;
         position: relative;
         padding: 3px;
     }
@@ -148,16 +81,40 @@
 	       <th>{{story.name}} <a href="#" class="add-task">Add Task</a></th>
                <td class="droppable not-started">
                    {% for task in story.taskList %}
+                       {% ifequal task.status 'Not Started' %}
+                       <div class="draggable task-sticker" id="{{task.key}}">
+                           <div class="task">
+                               {{task.name}}
+                               <span class="estimate">{{task.estimate}}</span>
+                           </div>
+                       </div>
+                       {% endifequal %}
+                   {% endfor %}
+               </td>
+	       <td class="droppable in-progress">
+               {% for task in story.taskList %}
+                   {% ifequal task.status 'In Progress' %}
                    <div class="draggable task-sticker" id="{{task.key}}">
                        <div class="task">
                            {{task.name}}
                            <span class="estimate">{{task.estimate}}</span>
                        </div>
                    </div>
-                   {% endfor %}
-               </td>
-	       <td class="droppable in-progress"></td>
-	       <td class="droppable done"></td>
+                   {% endifequal %}
+               {% endfor %}
+           </td>
+	       <td class="droppable done">
+               {% for task in story.taskList %}
+                    {% ifequal task.status 'Done' %}
+                    <div class="draggable task-sticker" id="{{task.key}}">
+                       <div class="task">
+                           {{task.name}}
+                           <span class="estimate">{{task.estimate}}</span>
+                       </div>
+                    </div>
+                    {% endifequal %}
+               {% endfor %}
+           </td>
 	      </tr>
 	    {% endfor %}
     </tbody>
