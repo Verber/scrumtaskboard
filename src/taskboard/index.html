@@ -38,7 +38,9 @@
                                 +'</div>'
                                 +'</div>';
                             $('#'+$('#story-key').val()+' td.not-started').append(task);
-                            $('#'+data.task_key).draggable();
+                            $('#'+data.task_key).draggable({
+                                containment: $('td', $(this).parents('tr.story-row'))
+                            });
                             $('.add-task-dialog').dialog('close');
                         } else {
                             alert(data.message);
@@ -49,15 +51,36 @@
                 $('.draggable').each(function(){
                     $(this).draggable({
                         //cancel: 'a.ui-icon',// clicking an icon won't initiate dragging
-                        //revert: 'invalid', // when not dropped, the item will revert back to its initial position
-                        containment: $(this).parents('tr.story-row')
-                        //helper: 'clone',
-                        //cursor: 'move'
+                        containment: $(this).parents('tr.story-row'),
+                        snap: true,
+                        snapMode: 'inner',
+                        snapTolerance: 100,
+                        scope: 'tasks',
+                        revert: 'invalid',
+                        helper: 'clone',
+                        cursor: 'move'
                     });
                 });
 
-                //$('.not-started').droppable();
-                //$('.in-progress').droppable();
+                $('td.not-droppable').droppable({scope: 'stories'});
+                $('td.droppable').droppable({
+                    scope: 'tasks',
+                    tolerance: 'pointer',
+                    drop: function(event, ui){
+                        $(this).append(ui.draggable);
+                        ui.draggable.attr('style', '').draggable({
+                            //cancel: 'a.ui-icon',// clicking an icon won't initiate dragging
+                            containment: $(this).parents('tr.story-row'),
+                            snap: true,
+                            snapMode: 'inner',
+                            snapTolerance: 100,
+                            scope: 'tasks',
+                            revert: 'invalid',
+                            helper: 'clone',
+                            cursor: 'move'
+                        });
+                    }
+                });
                 //$('.done').droppable();
 
       })
@@ -66,6 +89,10 @@
     <style type="text/css">
     table#board thead {
         background-color: #ccc;
+    }
+
+    table#board td, table#board th{
+        vertical-align: top;
     }
 
     .add-task-dialog {
@@ -109,10 +136,10 @@
  <table id="board" width="100%">
     <thead>
         <tr>
-            <td>Story</td>
-            <td>Not started</td>
-            <td>In progress</td>
-            <td>DONE</td>
+            <td style="width: 16%">Story</td>
+            <td style="width: 28%">Not started</td>
+            <td style="width: 28%">In progress</td>
+            <td style="width: 28%">DONE</td>
         </tr>
     </thead>
     <tbody>

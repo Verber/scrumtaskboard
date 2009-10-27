@@ -18,4 +18,5 @@ class Story(db.Model):
 class Task(db.Model):
     name = db.StringProperty(default="name", required=True)
     story = db.ReferenceProperty(Story, collection_name='taskList')
-    status = db.StringProperty(default="Not Done")    
+    status = db.StringProperty(default="Not Started")
+    estimate = db.StringProperty(default='0')

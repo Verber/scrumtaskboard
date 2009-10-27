@@ -3,7 +3,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
 from Model import Project
-from taskboard import Taskboard
+from taskboard import TaskboardPage
 from backlog import BacklogPage
 
 class MainPage(webapp.RequestHandler):
@@ -45,8 +45,8 @@ class DeleteProjectHandler(webapp.RequestHandler):
 
 application = webapp.WSGIApplication([('/', MainPage),
                                         ('/main', MainPage),
-                                        ('/project/([^\/]*?)/backlog', BacklogPage),
-                                        ('/project/([^\/]*?)/taskboard', Taskboard),
+                                        #('/project/([^\/]*?)/backlog', BacklogPage),
+                                        #('/project/([^\/]*?)/taskboard', Taskboard),
                                         ('/main/deleteProject/(.*?)', DeleteProjectHandler)
                                         ],
                                        debug=True)
