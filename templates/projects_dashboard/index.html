@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Projects{% endblock %}
+
+{% block content %}
+<table>
+    {% for project in projectsList %}
+    <tr>
+        <td><a href="/project/{{ project.name }}/taskboard">{{ project.name }}</a>
+        <a href="/main/deleteProject/%s">X</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+<form action="/main" method="post">
+        <table>
+        <tr>
+        <td>Project Name</td><td><input type="text" name="projectName"></td>
+        </tr>
+        </table>
+        <input type="submit" value="Add project" />
+        </form>
+{% endblock %}
