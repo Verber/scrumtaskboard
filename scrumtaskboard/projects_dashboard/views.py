@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
-from models import *
+from models import Project
 
 @login_required
 def index(request):
